@@ -7,6 +7,22 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key = True)
+    username = Column(String(100), primary_key = True)    
+    firstname = Column(String(50), primary_key = False)
+    lastname = Column(String(50), primary_key = False)
+    email = Column(String(50), primary_key = False)
+
+class Favorites(Base):
+    __tablename__ = 'favorites'
+    id = Column(Integer, primary_key = True)
+    person_id = Column (Integer, ForeingKey('person.id'))
+    planet = Column(String(100))
+    character = Column(String(100))
+
+
 class Person(Base):
     __tablename__ = 'person'
     # Here we define columns for the table person
