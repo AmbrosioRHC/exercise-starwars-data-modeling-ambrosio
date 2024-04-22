@@ -17,18 +17,21 @@ class User(Base):
 
 class Favorites(Base):
     __tablename__ = 'favorites'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, ForeingKey('user.id'), primary_key = True)
     person_id = Column (Integer, ForeingKey('person.id'))
-    planet = Column(String(100))
-    character = Column(String(100))
+    planet_id = Column(Integer(100), ForeingKey('planet.id'))
+    person_name = Column(String(100), ForeingKey('person.person_name'))
+    planet_name = Column(String(100), ForeingKey('planet.planet_name'))
 
 
 class Person(Base):
     __tablename__ = 'person'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    id = Column(Integer, ForeingKey('user.id'), primary_key=True)
+    person_name = Column(String(250), nullable=False)
+
+class 
 
 class Address(Base):
     __tablename__ = 'address'
