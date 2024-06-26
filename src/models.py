@@ -1,51 +1,56 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.orm import relationship, declarative_base
-from sqlalchemy import create_engine
 from eralchemy2 import render_er
 
 Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'user'
-    id = Column(Integer, primary_key = True)
-    username = Column(String(100), primary_key = True)    
-    firstname = Column(String(50), primary_key = False)
-    lastname = Column(String(50), primary_key = False)
-    email = Column(String(50), primary_key = False)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(100), unique=True, nullable=False)
+    firstname = Column(String(50), nullable=False)
+    lastname = Column(String(50), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+    
+    favorites = relationship("Favorite", back_populates="user")
 
-class Favorites(Base):
-    __tablename__ = 'favorites'
-    id = Column(Integer, ForeingKey('user.id'), primary_key = True)
-    person_id = Column (Integer, ForeingKey('person.id'))
-    planet_id = Column(Integer(100), ForeingKey('planet.id'))
-    person_name = Column(String(100), ForeingKey('person.person_name'))
-    planet_name = Column(String(100), ForeingKey('planet.planet_name'))
-
+class Favorite(Base):
+    __tablename__ = 'favorite'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    person_id = Column(Integer, ForeignKey('person.id'))
+    planet_id = Column(Integer, ForeignKey('planet.id'))
+    
+    user = relationship("User", back_populates="favorites")
+    person = relationship("Person")
+    planet = relationship("Planet")
 
 class Person(Base):
     __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, ForeingKey('user.id'), primary_key=True)
-    person_name = Column(String(250), nullable=False)
-
-class 
-
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    name = Column(String(250), nullable=False)
+    birth_year = Column(String(10))
+    gender = Column(String(10))
+    height = Column(String(10))
+    mass = Column(String(10))
+    hair_color = Column(String(50))
+    skin_color = Column(String(50))
+    eye_color = Column(String(50))
+    
+    favorites = relationship("Favorite", back_populates="person")
 
-    def to_dict(self):
-        return {}
+class Planet(Base):
+    __tablename__ = 'planet'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    diameter = Column(String(10))
+    climate = Column(String(50))
+    gravity = Column(String(50))
+    terrain = Column(String(50))
+    population = Column(String(50))
+    
+    favorites = relationship("Favorite", back_populates="planet")
 
-## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
